@@ -4,45 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Interactivo – Tēchne vs. Ciencia y Tecnología</title>
-</head>
-<body>
-
-<!-- INICIO DEL WIDGET DE QUIZ -->
-<div id="techne-quiz-wrapper">
-
     <style>
-        /* ESTILOS ESPECÍFICOS PARA EL QUIZ (Scopes) */
-        #techne-quiz-wrapper {
+        /* ESTILOS (Movidos al head para mayor compatibilidad) */
+        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9; /* Color de fondo de toda la página */
+            margin: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
-            margin: 20px 0;
-            width: 100%;
+            align-items: center;
+            min-height: 100vh;
         }
 
-        #techne-quiz-wrapper .quiz-card {
+        #techne-quiz-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .quiz-card {
             background-color: #ffffff;
             width: 100%;
             max-width: 600px;
             border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             overflow: hidden;
             padding: 30px;
             text-align: center;
             border: 1px solid #e0e0e0;
         }
 
-        #techne-quiz-wrapper h2.quiz-title { font-size: 22px; color: #333; margin-top: 0; margin-bottom: 10px; line-height: 1.3; }
-        #techne-quiz-wrapper h3.quiz-subtitle { font-size: 16px; color: #666; margin-bottom: 20px; font-weight: normal; }
+        h2.quiz-title { font-size: 22px; color: #333; margin-top: 0; margin-bottom: 10px; line-height: 1.3; }
+        h3.quiz-subtitle { font-size: 16px; color: #666; margin-bottom: 20px; font-weight: normal; }
         
-        #techne-quiz-wrapper .img-icon {
+        .img-icon {
             font-size: 50px;
             margin-bottom: 15px;
             display: block;
         }
 
         /* Botones de opciones */
-        #techne-quiz-wrapper .btn-option {
+        .btn-option {
             display: block;
             width: 100%;
             padding: 12px 15px;
@@ -57,26 +60,26 @@
             color: #333;
         }
 
-        #techne-quiz-wrapper .btn-option:hover:not([disabled]) {
+        .btn-option:hover:not([disabled]) {
             background-color: #e2e6ea;
             border-color: #adb5bd;
         }
 
         /* Estados de respuesta */
-        #techne-quiz-wrapper .correct {
+        .correct {
             background-color: #28a745 !important;
             color: white !important;
             border-color: #28a745 !important;
         }
 
-        #techne-quiz-wrapper .incorrect {
+        .incorrect {
             background-color: #dc3545 !important;
             color: white !important;
             border-color: #dc3545 !important;
         }
 
         /* Botones de control */
-        #techne-quiz-wrapper .btn-control {
+        .btn-control {
             background-color: #0056b3;
             color: white;
             border: none;
@@ -88,13 +91,16 @@
             display: inline-block;
         }
 
-        #techne-quiz-wrapper .btn-control:hover { background-color: #004494; }
-        #techne-quiz-wrapper .hidden { display: none !important; }
-        #techne-quiz-wrapper .score-text { font-size: 24px; font-weight: bold; color: #0056b3; margin: 10px 0; }
-        #techne-quiz-wrapper p { margin-bottom: 10px; }
-
+        .btn-control:hover { background-color: #004494; }
+        .hidden { display: none !important; }
+        .score-text { font-size: 24px; font-weight: bold; color: #0056b3; margin: 10px 0; }
+        
     </style>
+</head>
+<body>
 
+<!-- INICIO DEL WIDGET DE QUIZ -->
+<div id="techne-quiz-wrapper">
     <div class="quiz-card">
         <!-- PANTALLA INICIO -->
         <div id="pantalla-inicio">
@@ -102,7 +108,7 @@
             <h2 class="quiz-title">Quiz: Tēchne vs. Ciencia</h2>
             <h3 class="quiz-subtitle">Introducción a la Tecnología</h3>
             <p>Pon a prueba tus conocimientos sobre los conceptos fundamentales.</p>
-            <button class="btn-control" onclick="TechneQuiz.iniciar()">Comenzar Quiz</button>
+            <button class="btn-control" onclick="window.TechneQuiz.iniciar()">Comenzar Quiz</button>
         </div>
 
         <!-- PANTALLA PREGUNTAS -->
@@ -112,7 +118,7 @@
             </div>
             <h2 id="texto-pregunta" class="quiz-title" style="font-size: 18px;">...</h2>
             <div id="contenedor-respuestas"></div>
-            <button id="btn-siguiente" class="btn-control hidden" onclick="TechneQuiz.siguiente()">Siguiente Pregunta</button>
+            <button id="btn-siguiente" class="btn-control hidden" onclick="window.TechneQuiz.siguiente()">Siguiente Pregunta</button>
         </div>
 
         <!-- PANTALLA FINAL -->
@@ -122,158 +128,156 @@
             <p>Tu puntuación final es:</p>
             <div id="score-final" class="score-text">0 / 5</div>
             <p id="msg-feedback"></p>
-            <button class="btn-control" onclick="TechneQuiz.iniciar()">Intentar de nuevo</button>
+            <button class="btn-control" onclick="window.TechneQuiz.iniciar()">Intentar de nuevo</button>
         </div>
     </div>
-
-    <script>
-        // Usamos un objeto para evitar conflictos con otros scripts de Wordpress
-        var TechneQuiz = (function() {
-            
-            // DATOS
-            const preguntas = [
-                { q: "¿Qué significa originalmente el término griego technē?", a: [
-                    { t: "Arte, habilidad o saber hacer", c: true },
-                    { t: "Instrumento mecánico", c: false },
-                    { t: "Conocimiento teórico universal", c: false },
-                    { t: "Sistema político", c: false }
-                ]},
-                { q: "¿Cuál es la principal diferencia entre ciencia y tecnología?", a: [
-                    { t: "La ciencia busca comprender la realidad, la tecnología transformarla", c: true },
-                    { t: "La ciencia busca transformar la realidad, la tecnología comprenderla", c: false },
-                    { t: "La ciencia es práctica, la tecnología es teórica", c: false },
-                    { t: "La ciencia depende del contexto, la tecnología es universal", c: false }
-                ]},
-                { q: "Según Krick, ¿por qué la tecnología no es neutral?", a: [
-                    { t: "Porque no tiene impacto social", c: false },
-                    { t: "Porque está imbuida de valores, intereses y relaciones de poder", c: true },
-                    { t: "Porque depende únicamente de la ciencia", c: false },
-                    { t: "Porque siempre es beneficiosa", c: false }
-                ]},
-                { q: "¿Cuál de los siguientes es un riesgo asociado al uso de la tecnología?", a: [
-                    { t: "Avances en medicina", c: false },
-                    { t: "Mejora en calidad de vida", c: false },
-                    { t: "Democratización del conocimiento", c: false },
-                    { t: "Dependencia tecnológica", c: true }
-                ]},
-                { q: "¿Qué papel juega la educación frente a la tecnología?", a: [
-                    { t: "Eliminar los riesgos tecnológicos", c: false },
-                    { t: "Formar ciudadanos críticos", c: true },
-                    { t: "Garantizar el acceso universal", c: false },
-                    { t: "Sustituir la ciencia por la práctica", c: false }
-                ]}
-            ];
-
-            // ESTADO
-            let indiceActual = 0;
-            let puntaje = 0;
-
-            // REFERENCIAS DOM
-            let els = {};
-
-            function cacheElements() {
-                // Seleccionamos elementos dentro de nuestro wrapper para no confundir
-                const wrap = document.getElementById('techne-quiz-wrapper');
-                els = {
-                    inicio: wrap.querySelector('#pantalla-inicio'),
-                    pregunta: wrap.querySelector('#pantalla-pregunta'),
-                    resultado: wrap.querySelector('#pantalla-resultado'),
-                    txtPregunta: wrap.querySelector('#texto-pregunta'),
-                    divRespuestas: wrap.querySelector('#contenedor-respuestas'),
-                    btnSiguiente: wrap.querySelector('#btn-siguiente'),
-                    numActual: wrap.querySelector('#num-actual'),
-                    numTotal: wrap.querySelector('#num-total'),
-                    scoreFinal: wrap.querySelector('#score-final'),
-                    feedback: wrap.querySelector('#msg-feedback')
-                };
-            }
-
-            function iniciar() {
-                if(!els.inicio) cacheElements();
-                indiceActual = 0;
-                puntaje = 0;
-                els.numTotal.innerText = preguntas.length;
-                els.inicio.classList.add('hidden');
-                els.resultado.classList.add('hidden');
-                els.pregunta.classList.remove('hidden');
-                mostrarPregunta();
-            }
-
-            function mostrarPregunta() {
-                resetEstado();
-                let datos = preguntas[indiceActual];
-                els.numActual.innerText = indiceActual + 1;
-                els.txtPregunta.innerText = datos.q;
-
-                datos.a.forEach(opcion => {
-                    const btn = document.createElement('button');
-                    btn.innerText = opcion.t;
-                    btn.classList.add('btn-option');
-                    if(opcion.c) btn.dataset.correct = "true";
-                    btn.addEventListener('click', seleccionar);
-                    els.divRespuestas.appendChild(btn);
-                });
-            }
-
-            function resetEstado() {
-                els.btnSiguiente.classList.add('hidden');
-                while (els.divRespuestas.firstChild) {
-                    els.divRespuestas.removeChild(els.divRespuestas.firstChild);
-                }
-            }
-
-            function seleccionar(e) {
-                const btnSeleccionado = e.target;
-                const esCorrecto = btnSeleccionado.dataset.correct === "true";
-                
-                if(esCorrecto) {
-                    puntaje++;
-                    btnSeleccionado.classList.add('correct');
-                } else {
-                    btnSeleccionado.classList.add('incorrect');
-                }
-
-                // Mostrar correcta y bloquear
-                Array.from(els.divRespuestas.children).forEach(btn => {
-                    if(btn.dataset.correct === "true") btn.classList.add('correct');
-                    btn.disabled = true;
-                });
-
-                // Configurar botón siguiente
-                els.btnSiguiente.classList.remove('hidden');
-                if (preguntas.length > indiceActual + 1) {
-                    els.btnSiguiente.innerText = "Siguiente Pregunta";
-                    els.btnSiguiente.onclick = siguiente;
-                } else {
-                    els.btnSiguiente.innerText = "Ver Resultados";
-                    els.btnSiguiente.onclick = mostrarResultado;
-                }
-            }
-
-            function siguiente() {
-                indiceActual++;
-                mostrarPregunta();
-            }
-
-            function mostrarResultado() {
-                els.pregunta.classList.add('hidden');
-                els.resultado.classList.remove('hidden');
-                els.scoreFinal.innerText = `${puntaje} de ${preguntas.length}`;
-                
-                if(puntaje === 5) els.feedback.innerText = "¡Excelente! Dominio total.";
-                else if(puntaje >= 3) els.feedback.innerText = "¡Buen trabajo!";
-                else els.feedback.innerText = "Te recomiendo repasar el material.";
-            }
-
-            return {
-                iniciar: iniciar,
-                siguiente: siguiente
-            };
-
-        })();
-    </script>
 </div>
-<!-- FIN DEL WIDGET DE QUIZ -->
+
+<script>
+    // Asignamos explícitamente a window para evitar problemas de alcance
+    window.TechneQuiz = (function() {
+        
+        // DATOS
+        const preguntas = [
+            { q: "¿Qué significa originalmente el término griego technē?", a: [
+                { t: "Arte, habilidad o saber hacer", c: true },
+                { t: "Instrumento mecánico", c: false },
+                { t: "Conocimiento teórico universal", c: false },
+                { t: "Sistema político", c: false }
+            ]},
+            { q: "¿Cuál es la principal diferencia entre ciencia y tecnología?", a: [
+                { t: "La ciencia busca comprender la realidad, la tecnología transformarla", c: true },
+                { t: "La ciencia busca transformar la realidad, la tecnología comprenderla", c: false },
+                { t: "La ciencia es práctica, la tecnología es teórica", c: false },
+                { t: "La ciencia depende del contexto, la tecnología es universal", c: false }
+            ]},
+            { q: "Según Krick, ¿por qué la tecnología no es neutral?", a: [
+                { t: "Porque no tiene impacto social", c: false },
+                { t: "Porque está imbuida de valores, intereses y relaciones de poder", c: true },
+                { t: "Porque depende únicamente de la ciencia", c: false },
+                { t: "Porque siempre es beneficiosa", c: false }
+            ]},
+            { q: "¿Cuál de los siguientes es un riesgo asociado al uso de la tecnología?", a: [
+                { t: "Avances en medicina", c: false },
+                { t: "Mejora en calidad de vida", c: false },
+                { t: "Democratización del conocimiento", c: false },
+                { t: "Dependencia tecnológica", c: true }
+            ]},
+            { q: "¿Qué papel juega la educación frente a la tecnología?", a: [
+                { t: "Eliminar los riesgos tecnológicos", c: false },
+                { t: "Formar ciudadanos críticos", c: true },
+                { t: "Garantizar el acceso universal", c: false },
+                { t: "Sustituir la ciencia por la práctica", c: false }
+            ]}
+        ];
+
+        // ESTADO
+        let indiceActual = 0;
+        let puntaje = 0;
+
+        // REFERENCIAS DOM
+        let els = {};
+
+        function cacheElements() {
+            const wrap = document.getElementById('techne-quiz-wrapper');
+            els = {
+                inicio: wrap.querySelector('#pantalla-inicio'),
+                pregunta: wrap.querySelector('#pantalla-pregunta'),
+                resultado: wrap.querySelector('#pantalla-resultado'),
+                txtPregunta: wrap.querySelector('#texto-pregunta'),
+                divRespuestas: wrap.querySelector('#contenedor-respuestas'),
+                btnSiguiente: wrap.querySelector('#btn-siguiente'),
+                numActual: wrap.querySelector('#num-actual'),
+                numTotal: wrap.querySelector('#num-total'),
+                scoreFinal: wrap.querySelector('#score-final'),
+                feedback: wrap.querySelector('#msg-feedback')
+            };
+        }
+
+        function iniciar() {
+            if(!els.inicio) cacheElements();
+            indiceActual = 0;
+            puntaje = 0;
+            els.numTotal.innerText = preguntas.length;
+            els.inicio.classList.add('hidden');
+            els.resultado.classList.add('hidden');
+            els.pregunta.classList.remove('hidden');
+            mostrarPregunta();
+        }
+
+        function mostrarPregunta() {
+            resetEstado();
+            let datos = preguntas[indiceActual];
+            els.numActual.innerText = indiceActual + 1;
+            els.txtPregunta.innerText = datos.q;
+
+            datos.a.forEach(opcion => {
+                const btn = document.createElement('button');
+                btn.innerText = opcion.t;
+                btn.classList.add('btn-option');
+                if(opcion.c) btn.dataset.correct = "true";
+                btn.addEventListener('click', seleccionar);
+                els.divRespuestas.appendChild(btn);
+            });
+        }
+
+        function resetEstado() {
+            els.btnSiguiente.classList.add('hidden');
+            while (els.divRespuestas.firstChild) {
+                els.divRespuestas.removeChild(els.divRespuestas.firstChild);
+            }
+        }
+
+        function seleccionar(e) {
+            const btnSeleccionado = e.target;
+            const esCorrecto = btnSeleccionado.dataset.correct === "true";
+            
+            if(esCorrecto) {
+                puntaje++;
+                btnSeleccionado.classList.add('correct');
+            } else {
+                btnSeleccionado.classList.add('incorrect');
+            }
+
+            // Mostrar correcta y bloquear
+            Array.from(els.divRespuestas.children).forEach(btn => {
+                if(btn.dataset.correct === "true") btn.classList.add('correct');
+                btn.disabled = true;
+            });
+
+            // Configurar botón siguiente
+            els.btnSiguiente.classList.remove('hidden');
+            if (preguntas.length > indiceActual + 1) {
+                els.btnSiguiente.innerText = "Siguiente Pregunta";
+                els.btnSiguiente.onclick = siguiente; // Asignamos la función directamente
+            } else {
+                els.btnSiguiente.innerText = "Ver Resultados";
+                els.btnSiguiente.onclick = mostrarResultado;
+            }
+        }
+
+        function siguiente() {
+            indiceActual++;
+            mostrarPregunta();
+        }
+
+        function mostrarResultado() {
+            els.pregunta.classList.add('hidden');
+            els.resultado.classList.remove('hidden');
+            els.scoreFinal.innerText = `${puntaje} de ${preguntas.length}`;
+            
+            if(puntaje === 5) els.feedback.innerText = "¡Excelente! Dominio total.";
+            else if(puntaje >= 3) els.feedback.innerText = "¡Buen trabajo!";
+            else els.feedback.innerText = "Te recomiendo repasar el material.";
+        }
+
+        return {
+            iniciar: iniciar,
+            siguiente: siguiente
+        };
+
+    })();
+</script>
 
 </body>
 </html>
